@@ -1,0 +1,2 @@
+# rodo
+rails basic
