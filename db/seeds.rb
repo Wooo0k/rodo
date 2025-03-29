@@ -39,7 +39,7 @@ tasks = [
     due_date: today + 5.days,
     completed: false
   },
-  
+
   # 공부 관련 작업
   {
     title: "GraphQL 기초 학습",
@@ -71,7 +71,7 @@ tasks = [
     due_date: today + 14.days,
     completed: false
   },
-  
+
   # 운동 관련 작업
   {
     title: "러닝 30분",
@@ -103,7 +103,7 @@ tasks = [
     due_date: today + 3.days,
     completed: false
   },
-  
+
   # 생활 관련 작업
   {
     title: "장보기",
