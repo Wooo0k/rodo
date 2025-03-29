@@ -1,0 +1,54 @@
+<%= form_with(model: task, class: "space-y-6") do |form| %>
+  <% if task.errors.any? %>
+    <div class="bg-red-50 p-4 rounded-md mb-6">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">
+            <%= pluralize(task.errors.count, "오류") %> 발생:
+          </h3>
+          <div class="mt-2 text-sm text-red-700">
+            <ul class="list-disc pl-5 space-y-1">
+              <% task.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :title, "제목", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <span class="text-red-500 ml-1">*</span>
+    <div class="relative rounded-md shadow-sm">
+      <%= form.text_field :title, required: true, class: "block w-full px-4 py-3 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500", placeholder: "작업명" %>
+    </div>
+  </div>
+
+  <div>
+    <%= form.label :description, "내용", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <div class="relative rounded-md shadow-sm">
+      <%= form.text_area :description, rows: 5, class: "block w-full px-4 py-3 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500", placeholder: "상세 내용" %>
+    </div>
+  </div>
+
+  <div>
+    <%= form.label :due_date, "마감", class: "block text-sm font-medium text-gray-700 mb-1" %>
+    <span class="text-red-500 ml-1">*</span>
+    <div class="relative rounded-md shadow-sm">
+      <%= form.datetime_local_field :due_date, required: true, class: "block w-full px-4 py-3 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+  </div>
+
+  <div class="flex justify-end space-x-3 pt-4">
+    <%= link_to "취소", task.new_record? ? tasks_path : task_path(task), class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+    <%= form.submit task.new_record? ? "저장" : "수정", class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+    <%= form.hidden_field :completed, value: false %>
+  </div>
+<% end %>

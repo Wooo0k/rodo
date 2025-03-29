@@ -1,0 +1,86 @@
+<div class="container mx-auto px-4 py-1 max-w-3xl">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold">내 작업</h1>
+  </div>
+  
+  <!-- 탭 메뉴와 추가 버튼 -->
+  <div class="flex justify-between items-center border-b mb-6">
+    <div class="flex">
+      <%= link_to "진행 중", tasks_path(completed: false), class: "py-2 px-4 #{!@completed ? 'border-b-2 border-blue-500 text-blue-600 font-medium' : 'text-gray-500 hover:text-gray-700'}" %>
+      <%= link_to "완료", tasks_path(completed: true), class: "py-2 px-4 #{@completed ? 'border-b-2 border-blue-500 text-blue-600 font-medium' : 'text-gray-500 hover:text-gray-700'}" %>
+    </div>
+    <%= link_to new_task_path, class: "bg-blue-500 hover:bg-blue-600 text-white p-2 mr-2 mb-1 rounded-full" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+    <% end %>
+  </div>
+  
+  <% if @tasks.any? %>
+    <div class="overflow-x-auto bg-white rounded-lg shadow">
+      <table class="min-w-full">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">제목</th>
+            <th class="px-6 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">마감일</th>
+            <th class="px-6 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">작업</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <% @tasks.each do |task| %>
+            <tr class="hover:bg-gray-50 cursor-pointer">
+              <td class="px-6 py-2 whitespace-nowrap" onclick="window.location='<%= task_path(task) %>'">
+                <div class="text-sm font-medium text-gray-900"><%= task.title %></div>
+              </td>
+              <td class="px-6 py-2 whitespace-nowrap" onclick="window.location='<%= task_path(task) %>'">
+                <div class="text-sm text-gray-500">
+                  <%= task.due_date ? task.due_date.strftime('%Y년 %m월 %d일 (%a) %H시 %M분').gsub('Mon', '월').gsub('Tue', '화').gsub('Wed', '수').gsub('Thu', '목').gsub('Fri', '금').gsub('Sat', '토').gsub('Sun', '일') : '마감일 없음' %>
+                </div>
+              </td>
+
+              <td class="px-6 py-2 whitespace-nowrap text-right text-sm font-medium">
+                <div class="flex items-center justify-end space-x-1">
+                  <% if task.completed %>
+                    <!-- 미완료로 되돌리기 버튼 (완료 상태일 때만 표시) -->
+                    <%= button_to toggle_complete_task_path(task), method: :patch, class: "text-yellow-600 hover:text-yellow-900 p-1", title: "미완료로 표시" do %>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                      </svg>
+                    <% end %>
+                  <% else %>
+                    <!-- 완료 토글 버튼 (미완료 상태일 때만 표시) -->
+                    <%= button_to toggle_complete_task_path(task), method: :patch, class: "text-green-600 hover:text-green-900 p-1", title: "완료로 표시" do %>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    <% end %>
+                  <% end %>
+                  
+                  <% unless task.completed %>
+                    <!-- 수정 버튼 (완료되지 않은 할 일만 표시) -->
+                    <%= link_to edit_task_path(task), class: "text-indigo-600 hover:text-indigo-900 p-1", title: "수정하기" do %>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 0L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    <% end %>
+                  <% end %>
+                  
+                  <!-- 삭제 버튼 (휴지통 아이콘) -->
+                  <%= link_to task_path(task), data: { turbo_method: :delete, turbo_confirm: '정말 삭제하시겠습니까?' }, class: "text-red-600 hover:text-red-900 p-1", title: "삭제하기" do %>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="bg-white p-6 rounded-lg shadow text-center">
+      <p class="text-gray-500"><%= @completed ? '완료된 할 일이 없습니다.' : '할 일이 없습니다. 새 할 일을 추가해보세요!' %></p>
+    </div>
+  <% end %>
+</div>
